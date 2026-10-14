@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Material QC & Entry Form (Demo)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    :root,
+    body[data-theme="plate"] {
+      --theme-primary:       #2c7be5;
+      --theme-primary-dark:  #1a5bbf;
+      --theme-primary-light: #edf4ff;
+      --theme-primary-soft:  #e6ecf3;
+      --theme-header-bg:     #1e2b3c;
+      --theme-header-accent: #7cc4ff;
+      --theme-badge-bg:      #2e4a6b;
+      --theme-accent:        #2c7be5;
+    }
+    body[data-theme="section"] {
+      --theme-primary:       #e8871e;
+      --theme-primary-dark:  #b8640e;
+      --theme-primary-light: #fff4e5;
+      --theme-primary-soft:  #fdebd0;
+      --theme-header-bg:     #3a2410;
+      --theme-header-accent: #ffb95e;
+      --theme-badge-bg:      #5a3a18;
+      --theme-accent:        #e8871e;
+    }
+
+    body {
+      background: #f2f4f8;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      padding: 0 0 130px 0;
+      margin: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.3s;
+    }
+
+    .app-header {
+      background: var(--theme-header-bg);
+      color: white;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: background 0.3s;
+    }
+    .app-header h1 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .app-header h1 i { font-size: 1.1rem; color: var(--theme-header-accent); transition: color 0.3s; }
+    .storekeeper-badge {
+      background: var(--theme-badge-bg);
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: background 0.3s;
+    }
+    .storekeeper-badge i { color: var(--theme-header-accent); font-size: 0.8rem; transition: color 0.3s; }
+
+    .card-section {
+      background: white;
+      border-radius: 16px;
+      margin: 10px 10px 0 10px;
+      padding: 14px 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      border: 1px solid #e9edf2;
+      transition: border-color 0.3s;
+    }
+    body[data-theme="section"] .card-section { border-color: #fdebd0; }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e2b3c;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.2px;
+    }
+    .section-title i {
+      color: var(--theme-accent);
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+      transition: color 0.3s;
+    }
+
+    .sub-section {
+      background: #f9fbfd;
+      border: 1px solid #eef2f6;
+      border-radius: 12px;
+      padding: 12px 10px;
+      margin-top: 6px;
+      transition: background 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    body[data-theme="section"] .sub-section {
+      background: #fffaf3;
+      border-color: #fdebd0;
+    }
+    .sub-section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #4a5a6e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sub-section-label i {
+      color: var(--theme-primary);
+      font-size: 0.8rem;
+      transition: color 0.3s;
+    }
+
+    .sub-section.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(0.6);
+    }
+    .sub-section.disabled .sub-section-label i { color: #a6b5c6; }
+    .sub-section .lock-hint {
+      font-size: 0.68rem;
+      color: #d64a5a;
+      font-weight: 600;
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      gap: 5px;
+    }
+    .sub-section.disabled .lock-hint { display: flex; }
+
+    .temp-location {
+      background: #fff0f0;
+      border: 1.5px solid #f5b5b5;
+      border-radius: 12px;
+      padding: 12px 10px;
+      margin-top: 10px;
+      transition: background 0.3s, border-color 0.3s, opacity 0.3s;
+    }
+    .temp-location.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      filter: grayscale(0.6);
+    }
+    .temp-location-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #c0392b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .temp-location-label i {
+      color: #e74c3c;
+      font-size: 0.9rem;
+    }
+    .temp-location .form-control,
+    .temp-location .form-select {
+      border-color: #f5b5b5;
+      background: #fffafa;
+    }
+    .temp-location .form-control:focus,
+    .temp-location .form-select:focus {
+      border-color: #e74c3c;
+      box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+    }
+    .temp-location .photo-btn {
+      background: #fff0f0;
+      border-color: #f5b5b5;
+      color: #c0392b;
+    }
+    .temp-location .photo-btn i { color: #e74c3c; }
+    .temp-location .photo-btn:active { background: #fdd; }
+    .temp-location .lock-hint {
+      font-size: 0.68rem;
+      color: #c0392b;
+      font-weight: 600;
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      gap: 5px;
+    }
+    .temp-location.disabled .lock-hint { display: flex; }
+
+    .other-loc-wrap {
+      display: none;
+      margin-top: 6px;
+    }
+    .other-loc-wrap.visible { display: block; }
+
+    .form-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #4a5a6e;
+      margin-bottom: 3px;
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1.5px solid #dbe1e9;
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      background: #fafbfc;
+      transition: 0.15s, border-color 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--theme-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+      background: white;
+    }
+    .form-control::placeholder { color: #a6b5c6; font-size: 0.78rem; }
+    .required-field::after { content: " *"; color: #e04f5f; font-weight: 700; }
+
+    .type-toggle {
+      display: inline-flex;
+      background: var(--theme-primary-soft);
+      border-radius: 30px;
+      padding: 3px;
+      border: 1px solid #dbe1e9;
+      margin-left: auto;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .type-toggle button {
+      border: none;
+      background: transparent;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #6b7b8f;
+      padding: 4px 14px;
+      border-radius: 30px;
+      transition: 0.2s;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+    .type-toggle button.active {
+      background: var(--theme-primary);
+      color: white;
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--theme-primary) 40%, transparent);
+    }
+
+    .qc-measure-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+      background: #f9fbfd;
+      padding: 6px 8px;
+      border-radius: 12px;
+      border: 1px solid #eef2f6;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    body[data-theme="section"] .qc-measure-row {
+      background: #fffaf3;
+      border-color: #fdebd0;
+    }
+    .qc-measure-row .label-pcs {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #6b7b8f;
+      min-width: 36px;
+      background: var(--theme-primary-soft);
+      padding: 2px 6px;
+      border-radius: 30px;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .qc-measure-row .form-control {
+      padding: 6px 6px;
+      font-size: 0.78rem;
+      border-radius: 8px;
+      background: white;
+      border: 1.5px solid #dbe1e9;
+      text-align: center;
+      min-width: 0;
+    }
+    .qc-measure-row .unit { font-size: 0.65rem; color: #8a9bb0; min-width: 18px; text-align: center; }
+
+    .issue-grid {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .issue-item {
+      flex: 1 0 22%;
+      background: #f9fbfd;
+      border: 1.5px solid #eef2f6;
+      border-radius: 12px;
+      padding: 10px 4px;
+      text-align: center;
+      transition: 0.15s, background 0.3s, border-color 0.3s;
+      cursor: pointer;
+      user-select: none;
+    }
+    body[data-theme="section"] .issue-item {
+      background: #fffaf3;
+      border-color: #fdebd0;
+    }
+    .issue-item.active {
+      border-color: var(--theme-primary);
+      background: var(--theme-primary-light);
+    }
+    .issue-item i { font-size: 1.1rem; display: block; margin-bottom: 3px; color: #6b7b8f; transition: color 0.3s; }
+    .issue-item.active i { color: var(--theme-primary); }
+    .issue-item span { font-size: 0.68rem; font-weight: 600; color: #4a5a6e; }
+    .issue-item.active span { color: #1e2b3c; }
+
+    .photo-btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .photo-btn {
+      flex: 1;
+      background: var(--theme-primary-soft);
+      border: 1.5px dashed color-mix(in srgb, var(--theme-primary) 40%, #b6c7da);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #4a5a6e;
+      font-weight: 500;
+      font-size: 0.78rem;
+      transition: 0.15s, background 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .photo-btn i { font-size: 0.95rem; color: var(--theme-primary); transition: color 0.3s; }
+    .photo-btn:active { background: color-mix(in srgb, var(--theme-primary) 15%, white); }
+
+    .photo-preview { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .photo-thumb-wrap {
+      position: relative;
+      width: 48px; height: 48px;
+      flex-shrink: 0;
+    }
+    .photo-thumb {
+      width: 100%; height: 100%;
+      border-radius: 8px;
+      background: #eef2f6;
+      border: 1px solid #dbe1e9;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-remove {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #e74c3c;
+      color: white;
+      border: 1.5px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      padding: 0;
+      line-height: 1;
+      transition: 0.15s;
+      z-index: 2;
+    }
+    .photo-remove:hover { background: #c0392b; transform: scale(1.1); }
+    .photo-remove:active { transform: scale(0.95); }
+    .photo-remove i { pointer-events: none; }
+
+    .qc-decision-row {
+      display: flex;
+      gap: 8px;
+    }
+    .qc-decision-box {
+      flex: 1;
+      border: 2px solid #dbe1e9;
+      border-radius: 14px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: #6b7b8f;
+      background: #fafbfc;
+      transition: 0.15s, background 0.3s, border-color 0.3s, color 0.3s, opacity 0.3s;
+      text-align: center;
+      line-height: 1.25;
+    }
+    .qc-decision-box .icon-wrap {
+      font-size: 1.3rem;
+      line-height: 1;
+      transition: 0.15s;
+    }
+    .qc-decision-box.accept-active {
+      border-color: #1a9e6b;
+      background: #e8f9f1;
+      color: #1a9e6b;
+    }
+    .qc-decision-box.accept-active .icon-wrap { color: #1a9e6b; }
+    .qc-decision-box.concession-active {
+      border-color: #e8a020;
+      background: #fff8e8;
+      color: #b8770a;
+    }
+    .qc-decision-box.concession-active .icon-wrap { color: #e8a020; }
+    .qc-decision-box.reject-active {
+      border-color: #d64a5a;
+      background: #fdecef;
+      color: #d64a5a;
+    }
+    .qc-decision-box.reject-active .icon-wrap { color: #d64a5a; }
+
+    .qc-decision-box.option-disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      filter: grayscale(0.8);
+    }
+    .decision-hint {
+      font-size: 0.65rem;
+      color: #d64a5a;
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .decision-hint.visible { display: flex; }
+
+    .inform-btn-wrap {
+      margin-top: 10px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .inform-btn-wrap.visible {
+      max-height: 80px;
+      opacity: 1;
+    }
+    .btn-inform {
+      width: 100%;
+      background: #d64a5a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 11px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .btn-inform:active { background: #b93b4a; transform: scale(0.98); }
+    .btn-inform i { font-size: 1rem; }
+
+    .html-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-120%);
+      background: #2e3b4e;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 90vw;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    .html-toast.show {
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .html-toast i { font-size: 1.2rem; flex-shrink: 0; }
+    .html-toast.toast-warning i { color: #ffb95e; }
+    .html-toast.toast-success i { color: #1cc88a; }
+    .html-toast.toast-error i { color: #ff6b7a; }
+
+    .log-toggle-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .log-toggle-btn {
+      flex: 1;
+      background: white;
+      border: 1.5px solid #dbe1e9;
+      border-radius: 40px;
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--theme-primary);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: center;
+      transition: 0.15s, color 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .log-toggle-btn i { transition: transform 0.2s, color 0.3s; font-size: 0.7rem; }
+    .log-toggle-btn.collapsed i { transform: rotate(-90deg); }
+    .log-toggle-btn.active {
+      background: var(--theme-primary-light);
+      border-color: var(--theme-primary);
+    }
+
+    .log-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      border-radius: 12px;
+      background: #f9fbfd;
+      border: 1px solid #eef2f6;
+      width: 100%;
+    }
+    body[data-theme="section"] .log-panel {
+      background: #fffaf3;
+      border-color: #fdebd0;
+    }
+    .log-panel.open {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 6px 4px 6px 6px;
+      margin-top: 6px;
+      border: 1px solid #dbe1e9;
+    }
+    .log-entry {
+      font-size: 0.68rem;
+      padding: 8px 8px;
+      border-bottom: 1px solid #e9edf2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px 10px;
+      color: #2e3b4e;
+      line-height: 1.35;
+    }
+    body[data-theme="section"] .log-entry { border-bottom-color: #fdebd0; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-entry .log-time { color: #8a9bb0; font-size: 0.6rem; width: 100%; }
+    .log-entry .log-spec {
+      font-weight: 700; color: #1e2b3c; font-family: monospace;
+      font-size: 0.68rem; background: var(--theme-primary-soft);
+      padding: 1px 8px; border-radius: 20px;
+      transition: background 0.3s;
+    }
+    .log-entry .log-qc { font-weight: 600; font-size: 0.65rem; }
+    .log-entry .log-qc.accepted { color: #1a9e6b; }
+    .log-entry .log-qc.concession { color: #b8770a; }
+    .log-entry .log-qc.rejected { color: #d64a5a; }
+    .log-entry .log-qc.pending { color: #d99a2b; }
+
+    .bottom-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      padding: 10px 14px 14px 14px;
+      border-top: 1px solid #e9edf2;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.04);
+      z-index: 200;
+    }
+    body[data-theme="section"] .bottom-bar { border-top-color: #fdebd0; }
+
+    .session-counter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--theme-primary-light);
+      border: 1px solid var(--theme-primary-soft);
+      border-radius: 10px;
+      padding: 6px 12px;
+      margin-bottom: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #2e3b4e;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .session-counter .label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #4a5a6e;
+    }
+    .session-counter .label i {
+      color: var(--theme-primary);
+      font-size: 0.85rem;
+      transition: color 0.3s;
+    }
+    .session-counter .count-badge {
+      background: var(--theme-header-bg);
+      color: white;
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 2px 12px;
+      border-radius: 20px;
+      min-width: 36px;
+      text-align: center;
+      transition: background 0.3s;
+    }
+
+    .btn-submit {
+      background: var(--theme-header-bg);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.15s, background 0.3s;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+    .btn-submit:active { transform: scale(0.98); filter: brightness(1.15); }
+    .btn-submit i { font-size: 1rem; }
+    .btn-submit:disabled {
+      background: #7b8794;
+      cursor: not-allowed;
+      opacity: 0.85;
+      transform: none;
+      filter: none;
+    }
+
+    .row-tight { --bs-gutter-x: 0.4rem; --bs-gutter-y: 0.4rem; }
+
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+    @media (max-width: 360px) {
+      .form-control, .form-select { font-size: 0.72rem; padding: 6px 5px; }
+      .qc-measure-row .form-control { font-size: 0.7rem; padding: 4px 2px; }
+      .issue-item span { font-size: 0.6rem; }
+      .type-toggle button { font-size: 0.65rem; padding: 3px 10px; }
+      .qc-decision-box { font-size: 0.68rem; padding: 8px 4px; }
+      .qc-decision-box .icon-wrap { font-size: 1.1rem; }
+      .session-counter { font-size: 0.7rem; padding: 5px 10px; }
+    }
+  </style>
+</head>
+<body data-theme="plate">
+
+  <div id="htmlToast" class="html-toast toast-warning">
+    <i class="fas fa-exclamation-circle"></i>
+    <span id="htmlToastMessage">Message</span>
+  </div>
+
+  <header class="app-header">
+    <h1><i class="fas fa-clipboard-check"></i>Material QC & Entry Form</h1>
+    <div class="storekeeper-badge">
+      <i class="fas fa-user-check"></i>
+      <span id="storeKeeperName">Apple</span>
+    </div>
+  </header>
+
+  <!-- 注意：这里从 <form> 改成 <div>，避免 sandbox 拦截 form submit -->
+  <div id="receivingForm">
+
+    <div class="card-section">
+      <div class="section-title">
+        <i class="fas fa-info-circle"></i>Basic Info
+      </div>
+      <div class="row row-tight">
+        <div class="col-6">
+          <label class="form-label required-field">Supplier</label>
+          <select class="form-select" id="supplier">
+            <option value="" selected disabled>Select</option>
+            <option value="MetalCorp">MetalCorp</option>
+            <option value="SteelInc">SteelInc</option>
+            <option value="InoxPlus">InoxPlus</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <label class="form-label required-field">Supplier Delivery Order</label>
+          <input type="text" class="form-control" id="deliveryNote" placeholder="e.g. DN-2025-001">
+        </div>
+      </div>
+      <div class="mt-2" id="otherSupplierWrap" style="display:none;">
+        <label class="form-label">Other supplier name</label>
+        <input type="text" class="form-control" id="otherSupplier" placeholder="Enter supplier name">
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-title">
+        <i class="fas fa-cube"></i>
+        <span id="specTitle">Specification (Plate)</span>
+        <div class="type-toggle ms-auto" id="typeToggle">
+          <button type="button" class="active" data-type="plate">Plate</button>
+          <button type="button" data-type="section">Section</button>
+        </div>
+      </div>
+
+      <div id="plateFields">
+        <div class="row row-tight">
+          <div class="col-3">
+            <label class="form-label required-field">Grade</label>
+            <select class="form-select" id="p_grade">
+              <option value="" selected disabled>—</option>
+              <option value="A36">A36</option>
+              <option value="SS304">SS304</option>
+              <option value="SS316">SS316</option>
+              <option value="A572">A572</option>
+              <option value="Q235">Q235</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label class="form-label required-field">Surface</label>
+            <select class="form-select" id="p_surface">
+              <option value="" selected disabled>—</option>
+              <option value="HR">HR</option>
+              <option value="CR">CR</option>
+              <option value="2B">2B</option>
+              <option value="BA">BA</option>
+              <option value="No.4">No.4</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label class="form-label required-field">Dimension</label>
+            <select class="form-select" id="p_dimension">
+              <option value="" selected disabled>—</option>
+              <option value="1000x2000">1000x2000</option>
+              <option value="1250x2500">1250x2500</option>
+              <option value="1500x3000">1500x3000</option>
+              <option value="2000x4000">2000x4000</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <label class="form-label required-field">Thickness</label>
+            <select class="form-select" id="p_thickness">
+              <option value="" selected disabled>—</option>
+              <option value="2.0">2.0</option>
+              <option value="3.0">3.0</option>
+              <option value="5.0">5.0</option>
+              <option value="8.0">8.0</option>
+              <option value="10.0">10.0</option>
+              <option value="12.0">12.0</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="sectionFields" style="display:none;">
+        <div class="row row-tight">
+          <div class="col-4">
+            <label class="form-label required-field">Shape</label>
+            <select class="form-select" id="s_shape">
+              <option value="" selected disabled>—</option>
+              <option value="SHS">SHS</option>
+              <option value="RHS">RHS</option>
+              <option value="CHS">CHS</option>
+              <option value="Angle">Angle</option>
+              <option value="Channel">Channel</option>
+              <option value="I-Beam">I-Beam</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="form-label required-field">Grade</label>
+            <select class="form-select" id="s_grade">
+              <option value="" selected disabled>—</option>
+              <option value="A36">A36</option>
+              <option value="SS304">SS304</option>
+              <option value="SS316">SS316</option>
+              <option value="A572">A572</option>
+              <option value="Q235">Q235</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="form-label required-field">Surface</label>
+            <select class="form-select" id="s_surface">
+              <option value="" selected disabled>—</option>
+              <option value="HR">HR</option>
+              <option value="CR">CR</option>
+              <option value="2B">2B</option>
+              <option value="BA">BA</option>
+              <option value="No.4">No.4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row row-tight mt-1">
+          <div class="col-8">
+            <label class="form-label required-field">Cross Section Dimension</label>
+            <div class="d-flex align-items-center gap-2">
+              <input type="number" step="0.1" class="form-control" id="s_cross_l" placeholder="L" style="flex:1;">
+              <span class="unit" style="font-size:0.8rem; color:#6b7b8f; font-weight:700;">×</span>
+              <input type="number" step="0.1" class="form-control" id="s_cross_w" placeholder="W" style="flex:1;">
+            </div>
+          </div>
+          <div class="col-4">
+            <label class="form-label required-field">Thickness</label>
+            <select class="form-select" id="s_thickness">
+              <option value="" selected disabled>—</option>
+              <option value="1.5">1.5</option>
+              <option value="2.0">2.0</option>
+              <option value="2.5">2.5</option>
+              <option value="3.0">3.0</option>
+              <option value="4.0">4.0</option>
+              <option value="5.0">5.0</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-title">
+        <i class="fas fa-clipboard-list"></i>QC Inspection
+      </div>
+
+      <div id="plateQC">
+        <label class="form-label required-field">Thickness (3 pcs)</label>
+        <div class="qc-measure-row">
+          <span class="label-pcs">Pc1</span>
+          <input type="number" step="0.01" class="form-control" id="p_thk1" placeholder="0.00">
+          <span class="unit">mm</span>
+          <span class="label-pcs">Pc2</span>
+          <input type="number" step="0.01" class="form-control" id="p_thk2" placeholder="0.00">
+          <span class="unit">mm</span>
+          <span class="label-pcs">Pc3</span>
+          <input type="number" step="0.01" class="form-control" id="p_thk3" placeholder="0.00">
+          <span class="unit">mm</span>
+        </div>
+
+        <label class="form-label mt-2">Defection</label>
+        <div class="issue-grid" id="plateIssues">
+          <div class="issue-item" data-issue="scratches" role="button" tabindex="0">
+            <i class="fas fa-pen"></i><span>Scratches</span>
+          </div>
+          <div class="issue-item" data-issue="rust" role="button" tabindex="0">
+            <i class="fas fa-water"></i><span>Rust</span>
+          </div>
+          <div class="issue-item" data-issue="bend" role="button" tabindex="0">
+            <i class="fas fa-arrows-alt-v"></i><span>Bend</span>
+          </div>
+          <div class="issue-item" data-issue="dent" role="button" tabindex="0">
+            <i class="fas fa-circle"></i><span>Dent</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="sectionQC" style="display:none;">
+        <label class="form-label required-field">Wall thickness (3 pcs)</label>
+        <div class="qc-measure-row">
+          <span class="label-pcs">Pc1</span>
+          <input type="number" step="0.01" class="form-control" id="s_wt1" placeholder="0.00">
+          <span class="unit">mm</span>
+          <span class="label-pcs">Pc2</span>
+          <input type="number" step="0.01" class="form-control" id="s_wt2" placeholder="0.00">
+          <span class="unit">mm</span>
+          <span class="label-pcs">Pc3</span>
+          <input type="number" step="0.01" class="form-control" id="s_wt3" placeholder="0.00">
+          <span class="unit">mm</span>
+        </div>
+
+        <label class="form-label mt-2">Defection</label>
+        <div class="issue-grid" id="sectionIssues">
+          <div class="issue-item" data-issue="scratches" role="button" tabindex="0">
+            <i class="fas fa-pen"></i><span>Scratches</span>
+          </div>
+          <div class="issue-item" data-issue="rust" role="button" tabindex="0">
+            <i class="fas fa-water"></i><span>Rust</span>
+          </div>
+          <div class="issue-item" data-issue="bend" role="button" tabindex="0">
+            <i class="fas fa-arrows-alt-v"></i><span>Bend</span>
+          </div>
+          <div class="issue-item" data-issue="dent" role="button" tabindex="0">
+            <i class="fas fa-circle"></i><span>Dent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="photo-btn-group">
+        <button type="button" class="photo-btn" id="cameraBtn">
+          <i class="fas fa-camera"></i> Camera
+        </button>
+        <button type="button" class="photo-btn" id="galleryBtn">
+          <i class="fas fa-images"></i> Gallery
+        </button>
+      </div>
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;">
+      <input type="file" id="galleryInput" accept="image/*" style="display:none;" multiple>
+      <div class="photo-preview" id="photoPreview"></div>
+
+      <div class="mt-2">
+        <label class="form-label">Remarks</label>
+        <textarea class="form-control" id="qcRemarks" rows="2" placeholder="Optional remarks..."></textarea>
+      </div>
+
+      <div class="mt-3">
+        <div class="sub-section-label">
+          <i class="fas fa-gavel"></i>QC Decision
+        </div>
+        <div class="qc-decision-row">
+          <div class="qc-decision-box" id="acceptBox" role="button" tabindex="0">
+            <span class="icon-wrap">✓</span> QC Accept
+          </div>
+          <div class="qc-decision-box" id="concessionBox" role="button" tabindex="0">
+            <span class="icon-wrap">⚠</span> Concession
+          </div>
+          <div class="qc-decision-box" id="rejectBox" role="button" tabindex="0">
+            <span class="icon-wrap">✕</span> QC Reject
+          </div>
+        </div>
+
+        <div class="decision-hint" id="decisionHint">
+          <i class="fas fa-info-circle"></i>
+          Defection selected — QC Accept is not allowed. Please use Concession or Reject.
+        </div>
+
+        <div class="inform-btn-wrap" id="informWrap">
+          <button type="button" class="btn-inform" id="informBtn">
+            <i class="fab fa-telegram-plane"></i> Inform Purchaser through Telegram
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-title">
+        <i class="fas fa-warehouse"></i>Entry
+      </div>
+
+      <div class="sub-section" id="storageSection">
+        <div class="sub-section-label">
+          <i class="fas fa-map-marker-alt"></i>Storage Location
+        </div>
+
+        <div class="row row-tight">
+          <div class="col-6">
+            <label class="form-label">Location</label>
+            <select class="form-select" id="location">
+              <option value="" selected disabled>Select location</option>
+              <option value="Warehouse A">Warehouse A</option>
+              <option value="Warehouse B">Warehouse B</option>
+              <option value="Warehouse C">Warehouse C</option>
+              <option value="Warehouse D">Warehouse D</option>
+              <option value="Yard">Yard</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Quantity</label>
+            <input type="number" step="1" min="0" class="form-control" id="quantity" placeholder="e.g. 10">
+          </div>
+        </div>
+
+        <div class="lock-hint">
+          <i class="fas fa-lock"></i>
+          Storage entry is disabled because QC is Rejected. The material will not be stored.
+        </div>
+      </div>
+
+      <div class="temp-location" id="tempSection">
+        <div class="temp-location-label">
+          <i class="fas fa-exclamation-triangle"></i>
+          Temporary Location
+        </div>
+
+        <div class="row row-tight">
+          <div class="col-6">
+            <label class="form-label">Location</label>
+            <select class="form-select" id="tempLocationSelect">
+              <option value="" selected disabled>Select</option>
+              <option value="Loading Bay">Loading Bay</option>
+              <option value="Holding Area">Holding Area</option>
+              <option value="Inspection Area">Inspection Area</option>
+              <option value="Placement as per photo">Placement as per photo</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Quantity</label>
+            <input type="number" step="1" min="0" class="form-control" id="tempQuantity" placeholder="e.g. 5">
+          </div>
+        </div>
+
+        <div class="other-loc-wrap" id="otherLocWrap">
+          <label class="form-label">Specify location</label>
+          <input type="text" class="form-control" id="tempOtherLocation" placeholder="Enter temporary location">
+        </div>
+
+        <div class="photo-btn-group">
+          <button type="button" class="photo-btn" id="tempCameraBtn">
+            <i class="fas fa-camera"></i> Camera
+          </button>
+          <button type="button" class="photo-btn" id="tempGalleryBtn">
+            <i class="fas fa-images"></i> Gallery
+          </button>
+        </div>
+        <input type="file" id="tempCameraInput" accept="image/*" capture="environment" style="display:none;">
+        <input type="file" id="tempGalleryInput" accept="image/*" style="display:none;" multiple>
+        <div class="photo-preview" id="tempPhotoPreview"></div>
+
+        <div class="lock-hint">
+          <i class="fas fa-camera"></i>
+          A photo is required for Temporary Location.
+        </div>
+      </div>
+    </div>
+
+    <div class="card-section" style="margin-top: 10px;">
+      <div class="log-toggle-group">
+        <button type="button" class="log-toggle-btn collapsed" id="systemLogBtn">
+          <i class="fas fa-chevron-down"></i> System History
+        </button>
+        <button type="button" class="log-toggle-btn collapsed" id="currentLogBtn">
+          <i class="fas fa-chevron-down"></i> Current Log
+        </button>
+      </div>
+      <div class="log-panel" id="systemLogPanel">
+        <div id="systemLogList">
+          <div class="text-center py-3 text-muted" style="font-size:0.75rem;">
+            <i class="fas fa-spinner fa-spin me-1"></i> Loading...
+          </div>
+        </div>
+      </div>
+      <div class="log-panel" id="currentLogPanel">
+        <div id="currentLogList">
+          <div class="text-center py-3 text-muted" style="font-size:0.75rem;">
+            No submissions in this session yet.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height: 16px;"></div>
+  </div>
+
+  <div class="bottom-bar">
+
+    <div class="session-counter">
+      <span class="label">
+        <i class="fas fa-layer-group"></i>
+        This session submitted
+      </span>
+      <span class="count-badge" id="sessionCountBadge">0</span>
+    </div>
+
+    <!-- 注意：type="button"，不再触发 form submit -->
+    <button type="button" class="btn-submit" id="submitBtn">
+      <i class="fas fa-paper-plane"></i> Submit Entry
+    </button>
+    <div id="submitMessage" class="mt-1" style="font-size:0.75rem;"></div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ========== 0. Custom HTML Toast ==========
+      const toast = document.getElementById('htmlToast');
+      const toastMsg = document.getElementById('htmlToastMessage');
+      let toastTimer = null;
+
+      function showToast(message, type = 'warning', duration = 3500) {
+        clearTimeout(toastTimer);
+        toastMsg.textContent = message;
+        toast.className = 'html-toast show toast-' + type;
+        toastTimer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, duration);
+        console.log('[TOAST ' + type + ']', message);
+      }
+
+      // ========== 1. Store keeper ==========
+      const params = new URLSearchParams(window.location.search);
+      const storeKeeper = params.get('H') || 'Apple';
+      document.getElementById('storeKeeperName').textContent = storeKeeper;
+
+      // ========== 1b. Session submit counter ==========
+      let sessionSubmitCount = 0;
+      const sessionCountBadge = document.getElementById('sessionCountBadge');
+      function updateSessionCountBadge() {
+        sessionCountBadge.textContent = sessionSubmitCount;
+      }
+      updateSessionCountBadge();
+
+      // ========== 2. Mock System History ==========
+      const MOCK_SYSTEM_LOGS = [
+        { time: '2025-03-28 09:12', spec: 'A36 / HR / 1000x2000 / 5.0', qc: 'Accepted' },
+        { time: '2025-03-28 08:45', spec: 'SS304 / 2B / 1250x2500 / 3.0', qc: 'Accepted' },
+        { time: '2025-03-27 16:30', spec: 'A572 / HR / 1500x3000 / 8.0', qc: 'Rejected' },
+        { time: '2025-03-27 14:20', spec: 'A36 / CR / 1000x2000 / 2.0', qc: 'Accepted' },
+        { time: '2025-03-27 11:05', spec: 'SS316 / BA / 1250x2500 / 2.0', qc: 'Concession' },
+        { time: '2025-03-27 09:50', spec: 'Q235 / HR / 1500x3000 / 10.0', qc: 'Accepted' },
+        { time: '2025-03-26 17:15', spec: 'A36 / HR / 2000x4000 / 12.0', qc: 'Accepted' },
+        { time: '2025-03-26 15:40', spec: 'SS304 / No.4 / 1000x2000 / 3.0', qc: 'Rejected' },
+        { time: '2025-03-26 13:25', spec: 'A572 / HR / 1250x2500 / 5.0', qc: 'Accepted' },
+        { time: '2025-03-26 10:10', spec: 'A36 / HR / 1000x2000 / 5.0', qc: 'Accepted' },
+        { time: '2025-03-25 16:55', spec: 'SS304 / 2B / 1500x3000 / 8.0', qc: 'Accepted' },
+        { time: '2025-03-25 14:35', spec: 'Q235 / CR / 1000x2000 / 2.0', qc: 'Concession' },
+        { time: '2025-03-25 11:20', spec: 'SS316 / BA / 1250x2500 / 3.0', qc: 'Accepted' },
+        { time: '2025-03-25 09:05', spec: 'A36 / HR / 2000x4000 / 10.0', qc: 'Accepted' },
+        { time: '2025-03-24 17:30', spec: 'A572 / HR / 1500x3000 / 8.0', qc: 'Rejected' }
+      ];
+
+      let currentLogs = [];
+
+      // ========== 3. Render log entry ==========
+      function renderLogEntry(entry) {
+        const qcLower = entry.qc.toLowerCase();
+        const qcClass = qcLower.includes('accept') ? 'accepted' :
+                        qcLower.includes('concession') ? 'concession' :
+                        qcLower.includes('reject') ? 'rejected' : 'pending';
+        return `
+          <div class="log-entry">
+            <span class="log-time">${entry.time}</span>
+            <span class="log-spec">${entry.spec}</span>
+            <span class="log-qc ${qcClass}">${entry.qc}</span>
+          </div>
+        `;
+      }
+
+      function renderSystemLogs() {
+        const c = document.getElementById('systemLogList');
+        if (!c) return;
+        if (MOCK_SYSTEM_LOGS.length === 0) {
+          c.innerHTML = '<div class="text-center py-3 text-muted" style="font-size:0.75rem;">No system history.</div>';
+          return;
+        }
+        let h = '';
+        MOCK_SYSTEM_LOGS.forEach(e => { h += renderLogEntry(e); });
+        c.innerHTML = h;
+      }
+
+      function renderCurrentLogs() {
+        const c = document.getElementById('currentLogList');
+        if (!c) return;
+        if (currentLogs.length === 0) {
+          c.innerHTML = '<div class="text-center py-3 text-muted" style="font-size:0.75rem;">No submissions in this session yet.</div>';
+          return;
+        }
+        let h = '';
+        [...currentLogs].reverse().forEach(e => { h += renderLogEntry(e); });
+        c.innerHTML = h;
+      }
+
+      // ========== 4. Log toggle ==========
+      const systemBtn = document.getElementById('systemLogBtn');
+      const systemPanel = document.getElementById('systemLogPanel');
+      const currentBtn = document.getElementById('currentLogBtn');
+      const currentPanel = document.getElementById('currentLogPanel');
+
+      function togglePanel(btn, panel, otherBtn, otherPanel) {
+        const isOpen = panel.classList.toggle('open');
+        btn.classList.toggle('collapsed', !isOpen);
+        btn.classList.toggle('active', isOpen);
+        const label = btn.id === 'systemLogBtn' ? 'System History' : 'Current Log';
+        btn.innerHTML = isOpen
+          ? '<i class="fas fa-chevron-up"></i> ' + label
+          : '<i class="fas fa-chevron-down"></i> ' + label;
+        if (otherPanel && otherPanel.classList.contains('open')) {
+          otherPanel.classList.remove('open');
+          otherBtn.classList.add('collapsed');
+          otherBtn.classList.remove('active');
+          const otherLabel = otherBtn.id === 'systemLogBtn' ? 'System History' : 'Current Log';
+          otherBtn.innerHTML = '<i class="fas fa-chevron-down"></i> ' + otherLabel;
+        }
+      }
+
+      systemBtn.addEventListener('click', () => togglePanel(systemBtn, systemPanel, currentBtn, currentPanel));
+      currentBtn.addEventListener('click', () => togglePanel(currentBtn, currentPanel, systemBtn, systemPanel));
+      renderSystemLogs();
+
+      // ========== 5. Plate / Section toggle + theme ==========
+      const plateBtn = document.querySelector('#typeToggle button[data-type="plate"]');
+      const sectionBtn = document.querySelector('#typeToggle button[data-type="section"]');
+      const plateFields = document.getElementById('plateFields');
+      const sectionFields = document.getElementById('sectionFields');
+      const plateQC = document.getElementById('plateQC');
+      const sectionQC = document.getElementById('sectionQC');
+      const specTitle = document.getElementById('specTitle');
+
+      let currentType = 'plate';
+
+      function switchType(type) {
+        currentType = type;
+        document.body.dataset.theme = type;
+        if (type === 'plate') {
+          plateBtn.classList.add('active');
+          sectionBtn.classList.remove('active');
+          plateFields.style.display = 'block';
+          sectionFields.style.display = 'none';
+          plateQC.style.display = 'block';
+          sectionQC.style.display = 'none';
+          specTitle.textContent = 'Specification (Plate)';
+        } else {
+          sectionBtn.classList.add('active');
+          plateBtn.classList.remove('active');
+          plateFields.style.display = 'none';
+          sectionFields.style.display = 'block';
+          plateQC.style.display = 'none';
+          sectionQC.style.display = 'block';
+          specTitle.textContent = 'Specification (Section)';
+        }
+        refreshAcceptAvailability();
+      }
+
+      plateBtn.addEventListener('click', () => switchType('plate'));
+      sectionBtn.addEventListener('click', () => switchType('section'));
+
+      // ========== 6. Supplier Other ==========
+      const supplierSelect = document.getElementById('supplier');
+      const otherWrap = document.getElementById('otherSupplierWrap');
+      const otherInput = document.getElementById('otherSupplier');
+      supplierSelect.addEventListener('change', function() {
+        if (this.value === 'Other') {
+          otherWrap.style.display = 'block';
+        } else {
+          otherWrap.style.display = 'none';
+          otherInput.value = '';
+        }
+      });
+
+      // ========== 7. Issue checkboxes (Defection) ==========
+      document.querySelectorAll('.issue-item').forEach(item => {
+        item.addEventListener('click', function() {
+          this.classList.toggle('active');
+          refreshAcceptAvailability();
+        });
+        item.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.classList.toggle('active');
+            refreshAcceptAvailability();
+          }
+        });
+      });
+
+      // ========== 8. Photo capture (QC Inspection) ==========
+      const cameraBtn = document.getElementById('cameraBtn');
+      const galleryBtn = document.getElementById('galleryBtn');
+      const cameraInput = document.getElementById('cameraInput');
+      const galleryInput = document.getElementById('galleryInput');
+      const photoPreview = document.getElementById('photoPreview');
+      const MAX_PHOTOS = 5;
+
+      cameraBtn.addEventListener('click', () => cameraInput.click());
+      galleryBtn.addEventListener('click', () => galleryInput.click());
+
+      function createThumb(dataUrl, onRemove) {
+        const wrap = document.createElement('div');
+        wrap.className = 'photo-thumb-wrap';
+
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.className = 'photo-thumb';
+        img.alt = 'Photo';
+        img.loading = 'lazy';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'photo-remove';
+        btn.setAttribute('aria-label', 'Remove photo');
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          wrap.remove();
+          if (typeof onRemove === 'function') onRemove();
+        });
+
+        wrap.appendChild(img);
+        wrap.appendChild(btn);
+        return wrap;
+      }
+
+      function handleFiles(files, inputEl, previewEl, maxCount, onRemoveCb) {
+        if (!files || files.length === 0) return;
+        const limit = maxCount || MAX_PHOTOS;
+        const targetPreview = previewEl || photoPreview;
+        const currentCount = targetPreview.querySelectorAll('.photo-thumb-wrap').length;
+        const remaining = limit - currentCount;
+        const toAdd = Math.min(files.length, remaining);
+        for (let i = 0; i < toAdd; i++) {
+          const file = files[i];
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const wrap = createThumb(event.target.result, onRemoveCb);
+            targetPreview.appendChild(wrap);
+          };
+          reader.readAsDataURL(file);
+        }
+        if (files.length > remaining) showToast(`Maximum ${limit} photos allowed. Added ${toAdd}.`, 'warning');
+        if (inputEl) inputEl.value = '';
+      }
+
+      cameraInput.addEventListener('change', function(e) { handleFiles(e.target.files, cameraInput, photoPreview); });
+      galleryInput.addEventListener('change', function(e) { handleFiles(e.target.files, galleryInput, photoPreview); });
+
+      // ========== 8b. Photo capture (Temporary Location) ==========
+      const tempCameraBtn = document.getElementById('tempCameraBtn');
+      const tempGalleryBtn = document.getElementById('tempGalleryBtn');
+      const tempCameraInput = document.getElementById('tempCameraInput');
+      const tempGalleryInput = document.getElementById('tempGalleryInput');
+      const tempPhotoPreview = document.getElementById('tempPhotoPreview');
+
+      tempCameraBtn.addEventListener('click', () => tempCameraInput.click());
+      tempGalleryBtn.addEventListener('click', () => tempGalleryInput.click());
+
+      tempCameraInput.addEventListener('change', function(e) { handleFiles(e.target.files, tempCameraInput, tempPhotoPreview); });
+      tempGalleryInput.addEventListener('change', function(e) { handleFiles(e.target.files, tempGalleryInput, tempPhotoPreview); });
+
+      // ========== 9. QC Decision + Defection gating ==========
+      const acceptBox = document.getElementById('acceptBox');
+      const concessionBox = document.getElementById('concessionBox');
+      const rejectBox = document.getElementById('rejectBox');
+      const informWrap = document.getElementById('informWrap');
+      const informBtn = document.getElementById('informBtn');
+      const decisionHint = document.getElementById('decisionHint');
+
+      const storageSection = document.getElementById('storageSection');
+      const locationSelect = document.getElementById('location');
+      const quantityInput = document.getElementById('quantity');
+      const tempSection = document.getElementById('tempSection');
+      const tempLocationSelect = document.getElementById('tempLocationSelect');
+      const tempQuantity = document.getElementById('tempQuantity');
+      const otherLocWrap = document.getElementById('otherLocWrap');
+      const tempOtherLocation = document.getElementById('tempOtherLocation');
+
+      let qcDecision = null;
+
+      function getActiveDefectionCount() {
+        const selector = currentType === 'plate' ? '#plateIssues .issue-item.active' : '#sectionIssues .issue-item.active';
+        return document.querySelectorAll(selector).length;
+      }
+
+      function refreshAcceptAvailability() {
+        const defectCount = getActiveDefectionCount();
+        if (defectCount > 0) {
+          acceptBox.classList.add('option-disabled');
+          decisionHint.classList.add('visible');
+          if (qcDecision === 'accept') {
+            qcDecision = null;
+            acceptBox.classList.remove('accept-active');
+            informWrap.classList.remove('visible');
+            resetStorage();
+            resetTemp();
+            setStorageBaseEnabled(false);
+            setTempBaseEnabled(false);
+          }
+        } else {
+          acceptBox.classList.remove('option-disabled');
+          decisionHint.classList.remove('visible');
+        }
+      }
+
+      let storageBaseEnabled = false;
+      let tempBaseEnabled = false;
+
+      function setStorageBaseEnabled(enabled) {
+        storageBaseEnabled = enabled;
+        if (!enabled) {
+          storageSection.classList.add('disabled');
+          locationSelect.disabled = true;
+          quantityInput.disabled = true;
+        } else {
+          storageSection.classList.remove('disabled');
+          locationSelect.disabled = false;
+          quantityInput.disabled = false;
+        }
+      }
+
+      function setTempBaseEnabled(enabled) {
+        tempBaseEnabled = enabled;
+        if (!enabled) {
+          tempSection.classList.add('disabled');
+          tempLocationSelect.disabled = true;
+          tempQuantity.disabled = true;
+        } else {
+          tempSection.classList.remove('disabled');
+          tempLocationSelect.disabled = false;
+          tempQuantity.disabled = false;
+        }
+      }
+
+      function resetStorage() {
+        locationSelect.value = '';
+        quantityInput.value = '';
+      }
+      function resetTemp() {
+        tempLocationSelect.value = '';
+        tempQuantity.value = '';
+        otherLocWrap.classList.remove('visible');
+        tempOtherLocation.value = '';
+        tempPhotoPreview.innerHTML = '';
+      }
+
+      function hasStorageInput() {
+        return !!(locationSelect.value || quantityInput.value);
+      }
+      function hasTempInput() {
+        return !!(tempLocationSelect.value || tempQuantity.value || tempPhotoPreview.querySelectorAll('.photo-thumb-wrap').length > 0);
+      }
+
+      function applyMutualExclusion() {
+        if (!storageBaseEnabled && !tempBaseEnabled) return;
+
+        if (!storageBaseEnabled) {
+          if (tempBaseEnabled) {
+            tempSection.classList.remove('disabled');
+            tempLocationSelect.disabled = false;
+            tempQuantity.disabled = false;
+          }
+          return;
+        }
+
+        if (storageBaseEnabled && tempBaseEnabled) {
+          if (hasStorageInput() && !hasTempInput()) {
+            tempSection.classList.add('disabled');
+            tempLocationSelect.disabled = true;
+            tempQuantity.disabled = true;
+          } else if (hasTempInput() && !hasStorageInput()) {
+            storageSection.classList.add('disabled');
+            locationSelect.disabled = true;
+            quantityInput.disabled = true;
+          } else if (hasStorageInput() && hasTempInput()) {
+            resetTemp();
+            tempSection.classList.add('disabled');
+            tempLocationSelect.disabled = true;
+            tempQuantity.disabled = true;
+          } else {
+            storageSection.classList.remove('disabled');
+            locationSelect.disabled = false;
+            quantityInput.disabled = false;
+            tempSection.classList.remove('disabled');
+            tempLocationSelect.disabled = false;
+            tempQuantity.disabled = false;
+          }
+        }
+      }
+
+      [locationSelect, quantityInput].forEach(el => {
+        el.addEventListener('input', () => { applyMutualExclusion(); });
+        el.addEventListener('change', applyMutualExclusion);
+      });
+
+      [tempLocationSelect, tempQuantity].forEach(el => {
+        el.addEventListener('input', applyMutualExclusion);
+        el.addEventListener('change', applyMutualExclusion);
+      });
+
+      const tempObserver = new MutationObserver(applyMutualExclusion);
+      tempObserver.observe(tempPhotoPreview, { childList: true });
+
+      function setDecision(decision) {
+        if (decision === 'accept' && getActiveDefectionCount() > 0) {
+          showToast('Defection is selected — QC Accept is not allowed. Use Concession or Reject.', 'warning', 3500);
+          return;
+        }
+
+        qcDecision = decision;
+
+        acceptBox.classList.toggle('accept-active', decision === 'accept');
+        concessionBox.classList.toggle('concession-active', decision === 'concession');
+        rejectBox.classList.toggle('reject-active', decision === 'reject');
+
+        if (decision === 'reject') {
+          informWrap.classList.add('visible');
+        } else {
+          informWrap.classList.remove('visible');
+        }
+
+        if (decision === 'accept' || decision === 'concession') {
+          setStorageBaseEnabled(true);
+          setTempBaseEnabled(true);
+          resetStorage();
+          resetTemp();
+          applyMutualExclusion();
+        } else if (decision === 'reject') {
+          setStorageBaseEnabled(false);
+          setTempBaseEnabled(true);
+          resetStorage();
+        } else {
+          setStorageBaseEnabled(false);
+          setTempBaseEnabled(false);
+          resetStorage();
+          resetTemp();
+        }
+      }
+
+      acceptBox.addEventListener('click', () => setDecision('accept'));
+      concessionBox.addEventListener('click', () => setDecision('concession'));
+      rejectBox.addEventListener('click', () => setDecision('reject'));
+
+      [acceptBox, concessionBox, rejectBox].forEach(box => {
+        box.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!this.classList.contains('option-disabled')) {
+              this.click();
+            } else {
+              showToast('Defection is selected — QC Accept is not allowed. Use Concession or Reject.', 'warning', 3500);
+            }
+          }
+        });
+      });
+
+      tempLocationSelect.addEventListener('change', function() {
+        if (this.value === 'Other') {
+          otherLocWrap.classList.add('visible');
+        } else {
+          otherLocWrap.classList.remove('visible');
+          tempOtherLocation.value = '';
+        }
+      });
+
+      refreshAcceptAvailability();
+      setStorageBaseEnabled(false);
+      setTempBaseEnabled(false);
+
+      // ========== 10. Inform Purchaser (demo) ==========
+      informBtn.addEventListener('click', function() {
+        const photoCount = photoPreview.querySelectorAll('.photo-thumb-wrap').length;
+        if (photoCount === 0) {
+          showToast('📸 Please attach at least one photo as proof of damage before informing the purchaser.', 'warning', 4500);
+          return;
+        }
+        showToast('✅ Purchaser has been informed via Telegram (demo). Photos: ' + photoCount, 'success', 3000);
+        console.log('[DEMO] Telegram notification sent. Photos:', photoCount);
+      });
+
+      // ========== 11. DEMO SUBMIT (button click, no form submit) ==========
+      const submitBtn = document.getElementById('submitBtn');
+      const submitMessage = document.getElementById('submitMessage');
+
+      const SUBMIT_COOLDOWN_MS = 6000;
+      let submitLocked = false;
+      let cooldownTimer = null;
+      let cooldownInterval = null;
+
+      function lockSubmitForCooldown() {
+        submitLocked = true;
+        submitBtn.disabled = true;
+        let remaining = Math.ceil(SUBMIT_COOLDOWN_MS / 1000);
+
+        submitBtn.innerHTML = `<i class="fas fa-hourglass-half"></i> Please wait ${remaining}s...`;
+
+        cooldownInterval = setInterval(() => {
+          remaining -= 1;
+          if (remaining > 0) {
+            submitBtn.innerHTML = `<i class="fas fa-hourglass-half"></i> Please wait ${remaining}s...`;
+          }
+        }, 1000);
+
+        cooldownTimer = setTimeout(() => {
+          clearInterval(cooldownInterval);
+          cooldownInterval = null;
+          cooldownTimer = null;
+          submitLocked = false;
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Entry';
+        }, SUBMIT_COOLDOWN_MS);
+      }
+
+      submitBtn.addEventListener('click', function() {
+        console.log('▶ [DEMO] Submit clicked');
+
+        if (submitLocked) {
+          showToast('Please wait for the cooldown to finish before submitting again.', 'warning', 2500);
+          return;
+        }
+
+        // ---------- 前端校验 ----------
+        const supplier = supplierSelect.value === 'Other' ? otherInput.value.trim() : supplierSelect.value;
+        const deliveryNote = document.getElementById('deliveryNote').value.trim();
+
+        if (!supplier) { showToast('Missing: Supplier', 'warning'); return; }
+        if (!deliveryNote) { showToast('Missing: Supplier Delivery Order', 'warning'); return; }
+
+        if (!qcDecision) {
+          showToast('Missing: QC Decision (Accept / Concession / Reject)', 'warning');
+          return;
+        }
+
+        const storageUsed = hasStorageInput();
+        const tempUsed = hasTempInput();
+
+        if (qcDecision === 'reject') {
+          if (!tempLocationSelect.value) { showToast('Missing: Temporary Location', 'warning'); return; }
+          if (tempLocationSelect.value === 'Other' && !tempOtherLocation.value.trim()) {
+            showToast('Missing: Temporary Location (Specify)', 'warning'); return;
+          }
+          if (!tempQuantity.value) { showToast('Missing: Temporary Location Quantity', 'warning'); return; }
+          if (tempPhotoPreview.querySelectorAll('.photo-thumb-wrap').length === 0) {
+            showToast('📸 Missing: Temporary Location photo', 'warning', 4500); return;
+          }
+        } else {
+          if (!storageUsed && !tempUsed) {
+            showToast('Missing: Storage Location OR Temporary Location', 'warning'); return;
+          }
+          if (storageUsed && tempUsed) {
+            showToast('Please fill only one: Storage OR Temporary', 'warning'); return;
+          }
+          if (storageUsed) {
+            if (!locationSelect.value) { showToast('Missing: Storage Location', 'warning'); return; }
+            if (!quantityInput.value) { showToast('Missing: Storage Quantity', 'warning'); return; }
+          }
+          if (tempUsed) {
+            if (!tempLocationSelect.value) { showToast('Missing: Temporary Location', 'warning'); return; }
+            if (tempLocationSelect.value === 'Other' && !tempOtherLocation.value.trim()) {
+              showToast('Missing: Temporary Location (Specify)', 'warning'); return;
+            }
+            if (!tempQuantity.value) { showToast('Missing: Temporary Location Quantity', 'warning'); return; }
+            if (tempPhotoPreview.querySelectorAll('.photo-thumb-wrap').length === 0) {
+              showToast('📸 Missing: Temporary Location photo', 'warning', 4500); return;
+            }
+          }
+        }
+
+        // ---------- 组装 payload ----------
+        let specStr = '';
+        let payload = {};
+
+        if (currentType === 'plate') {
+          const grade = document.getElementById('p_grade').value;
+          const surface = document.getElementById('p_surface').value;
+          const dimension = document.getElementById('p_dimension').value;
+          const thickness = document.getElementById('p_thickness').value;
+          const thk1 = document.getElementById('p_thk1').value;
+          const thk2 = document.getElementById('p_thk2').value;
+          const thk3 = document.getElementById('p_thk3').value;
+
+          if (!grade) { showToast('Missing: Plate Grade', 'warning'); return; }
+          if (!surface) { showToast('Missing: Plate Surface', 'warning'); return; }
+          if (!dimension) { showToast('Missing: Plate Dimension', 'warning'); return; }
+          if (!thickness) { showToast('Missing: Plate Thickness', 'warning'); return; }
+          if (!thk1 || !thk2 || !thk3) { showToast('Missing: Plate QC Thickness Pc1/Pc2/Pc3', 'warning'); return; }
+
+          const issues = [];
+          document.querySelectorAll('#plateIssues .issue-item.active').forEach(el => issues.push(el.dataset.issue));
+
+          specStr = `${grade} / ${surface} / ${dimension} / ${thickness}`;
+          payload = {
+            type: 'plate',
+            grade, surface, dimension, thickness,
+            thicknessMeasurements: [thk1, thk2, thk3],
+            issues: issues
+          };
+        } else {
+          const shape = document.getElementById('s_shape').value;
+          const grade = document.getElementById('s_grade').value;
+          const surface = document.getElementById('s_surface').value;
+          const crossL = document.getElementById('s_cross_l').value.trim();
+          const crossW = document.getElementById('s_cross_w').value.trim();
+          const cross = (crossL && crossW) ? `${crossL} x ${crossW}` : '';
+          const thickness = document.getElementById('s_thickness').value;
+          const wt1 = document.getElementById('s_wt1').value;
+          const wt2 = document.getElementById('s_wt2').value;
+          const wt3 = document.getElementById('s_wt3').value;
+
+          if (!shape) { showToast('Missing: Section Shape', 'warning'); return; }
+          if (!grade) { showToast('Missing: Section Grade', 'warning'); return; }
+          if (!surface) { showToast('Missing: Section Surface', 'warning'); return; }
+          if (!crossL || !crossW) { showToast('Missing: Section Cross Section Dimension', 'warning'); return; }
+          if (!thickness) { showToast('Missing: Section Thickness', 'warning'); return; }
+          if (!wt1 || !wt2 || !wt3) { showToast('Missing: Section QC Wall Thickness Pc1/Pc2/Pc3', 'warning'); return; }
+
+          const issues = [];
+          document.querySelectorAll('#sectionIssues .issue-item.active').forEach(el => issues.push(el.dataset.issue));
+
+          specStr = `${shape} / ${grade} / ${surface} / ${cross} / ${thickness}`;
+          payload = {
+            type: 'section',
+            shape, grade, surface,
+            crossSection: { length: crossL, width: crossW },
+            thickness,
+            wallThicknessMeasurements: [wt1, wt2, wt3],
+            issues: issues
+          };
+        }
+
+        payload.timestamp = new Date().toISOString();
+        payload.storeKeeper = storeKeeper;
+        payload.supplier = supplier;
+        payload.deliveryNote = deliveryNote;
+        payload.storageLocation = storageUsed ? locationSelect.value : null;
+        payload.storageQuantity = storageUsed ? quantityInput.value : null;
+        payload.tempLocation = tempUsed ? tempLocationSelect.value : null;
+        payload.tempQuantity = tempUsed ? tempQuantity.value : null;
+        payload.tempOtherText = (tempUsed && tempLocationSelect.value === 'Other') ? tempOtherLocation.value.trim() : null;
+        payload.tempPhotoCount = tempPhotoPreview.querySelectorAll('.photo-thumb-wrap').length;
+        payload.photoCount = photoPreview.querySelectorAll('.photo-thumb-wrap').length;
+        payload.qcRemarks = document.getElementById('qcRemarks').value.trim();
+        payload.qcDecision = qcDecision;
+        payload.sessionSubmitIndex = sessionSubmitCount + 1;
+
+        // ---- DEMO 模式：只印出，不真的送 ----
+        console.log('📦 [DEMO] Data to write (would be sent to GAS/Sheet):', payload);
+
+        // ---------- 模拟「保存中 → 成功」 ----------
+        submitLocked = true;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        submitMessage.innerHTML = '';
+
+        setTimeout(() => {
+          // 模拟保存成功
+          sessionSubmitCount += 1;
+          updateSessionCountBadge();
+
+          const qcStatus = qcDecision === 'accept' ? 'Accepted' :
+                           qcDecision === 'concession' ? 'Concession' : 'Rejected';
+          const now = new Date();
+          const timeStr = now.toLocaleString('en-GB', { hour12: false }).replace(',', '');
+
+          currentLogs.push({ time: timeStr, spec: specStr, qc: qcStatus });
+          renderCurrentLogs();
+
+          submitMessage.innerHTML = `
+            <div class="alert alert-success py-1 px-2 mb-0" style="font-size:0.72rem; border-radius:8px;">
+              <i class="fas fa-check-circle me-1"></i>
+              Saved (demo). ${qcStatus} — Session #${sessionSubmitCount}
+            </div>
+          `;
+
+          setTimeout(() => {
+            if (submitMessage.firstChild) submitMessage.innerHTML = '';
+          }, 4000);
+
+          lockSubmitForCooldown();
+        }, 600);
+      });
+
+      document.querySelectorAll('button, .issue-item, .qc-decision-box').forEach(el => {
+        el.addEventListener('touchstart', function(){}, { passive: true });
+      });
+
+    })();
+  </script>
+</body>
+</html>
